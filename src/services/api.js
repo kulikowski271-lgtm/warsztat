@@ -29,3 +29,30 @@ async function apiFetch(endpoint, options = {}) {
 }
 
 export { apiFetch, getToken }
+
+export async function login(email, password) {
+    const body = new URLSearchParams();
+    body.append("username", email);
+    body.append("password", password);
+
+    const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+    });
+
+    if (!response.ok) throw Error("Niepoprawny email lub hasło");
+
+    const data = await response.json();
+    localStorage.setItem("token", data.access_token);
+    return data
+}
+
+export async function checkHealth() {
+    const response = await fetch(`${API_URL}/api/v1/health`);
+
+    if (!response.ok) {
+        throw new Error("Backend nie działa");
+    }
+    return response.json();
+}
