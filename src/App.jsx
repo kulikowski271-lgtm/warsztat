@@ -1,8 +1,11 @@
 import './App.css'
 import { useEffect, useState } from "react";
 import { checkHealth } from "./services/api";
+import { Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
+function HomePage() {
     const [health, setHealth] = useState(null);
     const [error, setError] = useState(null);
 
@@ -13,6 +16,7 @@ function App() {
     }, []);
 
     return (
+      
         <div className="container mt-5">
             <h1>Warsztat samochodowy</h1>
 
@@ -33,6 +37,15 @@ function App() {
             )}
         </div>
     );
+}
+
+function App() {
+    return (
+        <Routes>
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/' element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        </Routes>
+    )
 }
 
 export default App;
