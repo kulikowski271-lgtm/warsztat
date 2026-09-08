@@ -4,10 +4,13 @@ import { checkHealth } from "./services/api";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useAuth } from './context/AuthContext';
 
 function HomePage() {
     const [health, setHealth] = useState(null);
     const [error, setError] = useState(null);
+
+    const { user, logout } = useAuth();
 
     useEffect(() => {
         checkHealth()
@@ -16,26 +19,39 @@ function HomePage() {
     }, []);
 
     return (
-      
-        <div className="container mt-5">
-            <h1>Warsztat samochodowy</h1>
+    <div className="page">
+        <div className="page-content">
+            <div className="top-bar">
+    <h1>Warsztat samochodowy</h1>
 
-            {health && (
-                <div className="alert alert-success mt-4">
-                    Backend działa 
-                    <br />
-                    Server: {health.server}
-                    <br />
-                    Database: {health.database}
-                </div>
-            )}
-
-            {error && (
-                <div className="alert alert-danger mt-4">
-                    {error} 
-                </div>
-            )}
+    {user && (
+    <div className="user-info">
+    Zalogowano jako:
+     <strong>{user.email}</strong> ({user.role})
+    <button className="btn btn-secondary ml-sm" onClick={logout}>
+    Wyloguj się
+     </button>
         </div>
+    )}
+</div>
+
+    {health && (
+    <div className="message message-success">
+        Backend działa
+        <br />
+        Server: {health.server}
+        <br />
+        Database: {health.database}
+    </div>
+)}
+
+{error && (
+    <div className="message message-error">
+        {error}
+    </div>
+)}
+ </div>
+    </div>
     );
 }
 

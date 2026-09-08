@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import "../App.css"
 
 function LoginPage() {
 
@@ -25,38 +26,40 @@ async function handleSubmit(e) {
 } 
 
     return (
-    <div className="container mt-5">
-        <h1>Logowanie</h1>
-        <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-                <label className="form-label">Email</label>
+    <div className="page">
+        <div className="page-content">
+            <div className="card">
+            <h1>Logowanie</h1>
+            <form onSubmit={handleSubmit} className="login-form">
+            <div className="field">
+                <label>Email</label>
                 <input 
                 type="email"
-                className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 />
             </div>
 
-            <div className="mb-3">
-                <label className="form-label">Hasło</label>
+            <div className="field">
+                <label>Hasło</label>
                 <input
                 type="password"
-                className="form-control"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 />
             </div>
 
-            {error && <div className="alert alert-danger">{error}</div>}
+            {error && <div className="message message-error">{error}</div>}
 
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary btn-block">
                 Zaloguj się
             </button>
 
         </form>
+            </div>
+        </div>
     </div>
 );
    
