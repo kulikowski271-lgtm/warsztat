@@ -6,6 +6,9 @@ function ClientsPage() {
     const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null)
+
+    const [showForm, setShowForm] = useState(false);
+    
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -45,6 +48,7 @@ function ClientsPage() {
         try {
             await createClient(formData);
             setFormData({first_name: "", last_name: "", email: "", phone: ""})
+            setShowForm(false);
             await loadClients();
         } catch(err) {
             setFormError(err.message)
@@ -56,12 +60,25 @@ function ClientsPage() {
             <div className="page-content">
                 <div className="top-bar">
                     <h1>Klienci</h1>
-                    <Link to="/" className="btn btn-secondary">
-                    Wróć na stronę główną
-                    </Link>
+                    <button 
+                    className="btn btn-primary" 
+                    onClick={() => setShowForm(true)}
+                    >
+                    + Nowy klient
+                    </button>
                 </div>
-                <div className="card">
-                    <h2>Dodaj klienta</h2>
+                {showForm && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="top-bar" style={{ marginBottom: "20px" }}>
+                        <h2>Dodaj klienta</h2>
+                        <button 
+                    className="btn btn-secondary" 
+                    onClick={() => setShowForm(false)}
+                >
+                    X
+                </button>
+            </div>
                     <form onSubmit={handleSubmit}>
 
                     <div className="field">
@@ -103,13 +120,22 @@ function ClientsPage() {
                         />
                     </div>
 
-                    {formError && <div className="message message-error">{formError}</div>}
-
+                    <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
                     <button type="submit" className="btn btn-primary">
-                        Dodaj klienta
+                        Zapisz klienta
                     </button>
-                    </form>
+                    <button 
+                        type="button" 
+                        className="btn btn-secondary" 
+                        onClick={() => setShowForm(false)}
+                    >
+                        Anuluj
+                    </button>
                 </div>
+            </form>
+            </div>
+        </div>
+)}
 
                 {loading && <p>Ładowanie...</p>}
                 {error && <div className="message message-error">{error}</div>}
