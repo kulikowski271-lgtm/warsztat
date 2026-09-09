@@ -1,8 +1,9 @@
 import './App.css'
 import { useEffect, useState } from "react";
 import { checkHealth } from "./services/api";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
+import ClientsPage from "./pages/ClientsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from './context/AuthContext';
 
@@ -22,12 +23,15 @@ function HomePage() {
     <div className="page">
         <div className="page-content">
             <div className="top-bar">
-    <h1>Warsztat samochodowy</h1>
+
+            <h1>Warsztat samochodowy</h1>
+
+            <Link to="/clients" className="btn btn-secondary ml-sm">Klienci</Link>
 
     {user && (
     <div className="user-info">
     Zalogowano jako:
-     <strong>{user.email}</strong> ({user.role})
+     <span className="user-email">{user.email}</span> ({user.role})
     <button className="btn btn-secondary ml-sm" onClick={logout}>
     Wyloguj się
      </button>
@@ -60,6 +64,7 @@ function App() {
         <Routes>
             <Route path='/login' element={<LoginPage />} />
             <Route path='/' element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+            <Route path='/clients' element={<ProtectedRoute><ClientsPage /></ProtectedRoute>} />
         </Routes>
     )
 }

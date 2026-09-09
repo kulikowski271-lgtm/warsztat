@@ -56,3 +56,14 @@ export async function checkHealth() {
     }
     return response.json();
 }
+
+export async function getClients() {
+    return apiFetch("/clients");
+}
+
+export async function createClient(clientData) {
+    return apiFetch("/clients", {
+        method: "POST",
+        body: JSON.stringify(clientData)
+    })
+}
