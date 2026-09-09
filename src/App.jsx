@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import ClientsPage from "./pages/ClientsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from './context/AuthContext';
+import Navbar from './components/Navbar';
 
 function HomePage() {
     const [health, setHealth] = useState(null);
@@ -20,24 +21,8 @@ function HomePage() {
     }, []);
 
     return (
-    <div className="page">
-        <div className="page-content">
-            <div className="top-bar">
-
-            <h1>Warsztat samochodowy</h1>
-
-            <Link to="/clients" className="btn btn-secondary ml-sm">Klienci</Link>
-
-    {user && (
-    <div className="user-info">
-    Zalogowano jako:
-     <span className="user-email">{user.email}</span> ({user.role})
-    <button className="btn btn-secondary ml-sm" onClick={logout}>
-    Wyloguj się
-     </button>
-        </div>
-    )}
-</div>
+            <div>
+            <h1>Pulpit</h1>
 
     {health && (
     <div className="message message-success">
@@ -55,7 +40,6 @@ function HomePage() {
     </div>
 )}
  </div>
-    </div>
     );
 }
 
@@ -63,8 +47,26 @@ function App() {
     return (
         <Routes>
             <Route path='/login' element={<LoginPage />} />
-            <Route path='/' element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
-            <Route path='/clients' element={<ProtectedRoute><ClientsPage /></ProtectedRoute>} />
+            <Route path='/' element={
+                <ProtectedRoute>
+                    <div className="app-layout">
+                        <Navbar />
+                        <main className="main-content">
+                            <HomePage />
+                        </main>
+                    </div>
+                </ProtectedRoute>
+            } />
+            <Route path='/clients' element={
+                <ProtectedRoute>
+                    <div className="app-layout">
+                        <Navbar />
+                        <main className="main-content">
+                            <ClientsPage />
+                        </main>
+                    </div>
+                </ProtectedRoute>
+            } />
         </Routes>
     )
 }

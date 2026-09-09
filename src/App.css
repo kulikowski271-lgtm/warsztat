@@ -1,11 +1,6 @@
-:root {
-    --color-bg: #F4F5F3;
-    --color-surface: #FFFFFF;
-    --color-ink: #1B1F23;
-    --color-ink-muted: #5B6470;
-    --color-accent: #C81E3A;
-    --color-accent-dark: #A11730;
-    --color-border: #DADFE3;
+html, body, #root {
+    height: 100%;
+    margin: 0;
 }
 
 * {
@@ -13,9 +8,8 @@
 }
 
 body {
-    margin: 0;
-    background-color: var(--color-bg);
-    color: var(--color-ink);
+    background-color: #F4F5F3;
+    color: #1B1F23;
     font-family: 'Inter', -apple-system, sans-serif;
 }
 
@@ -25,8 +19,8 @@ h1, h2, h3 {
 }
 
 .page {
-    min-height: 100vh;
-    padding: 2rem 1.5rem;
+    min-height: 100%;
+    padding: 32px 24px;
 }
 
 .page-content {
@@ -35,74 +29,75 @@ h1, h2, h3 {
 }
 
 .card {
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background-color: #FFFFFF;
+    border: 1px solid #DADFE3;
     border-radius: 4px;
-    padding: 2rem;
+    padding: 32px;
     max-width: 400px;
-    margin: 4rem auto 0;
+    margin: 64px auto 0;
 }
+
 .field {
-    margin-bottom: 1.25rem;
+    margin-bottom: 20px;
 }
 
 .field label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 14px;
     font-weight: 500;
-    color: var(--color-ink-muted);
-    margin-bottom: 0.375rem;
+    color: #5B6470;
+    margin-bottom: 6px;
 }
 
 .field input {
     width: 100%;
-    padding: 0.625rem 0.75rem;
-    border: 1px solid var(--color-border);
+    padding: 10px 12px;
+    border: 1px solid #DADFE3;
     border-radius: 4px;
-    font-size: 1rem;
+    font-size: 16px;
     font-family: inherit;
 }
 
 .field input:focus {
     outline: none;
-    border-color: var(--color-accent);
+    border-color: #C81E3A;
 }
 
 .btn {
     display: inline-block;
-    padding: 0.625rem 1.25rem;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     font-family: inherit;
-    font-size: 0.9375rem;
+    font-size: 15px;
     font-weight: 500;
     cursor: pointer;
 }
 
 .btn-primary {
-    background-color: var(--color-accent);
+    background-color: #C81E3A;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: var(--color-accent-dark);
+    background-color: #A11730;
 }
 
 .btn-secondary {
     background-color: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-ink);
+    border: 1px solid #DADFE3;
+    color: #1B1F23;
 }
 
 .btn-secondary:hover {
-    border-color: var(--color-ink-muted);
+    border-color: #5B6470;
 }
 
 .message {
-    padding: 0.75rem 1rem;
+    padding: 12px 16px;
     border-radius: 4px;
-    font-size: 0.9375rem;
-    margin-top: 1rem;
+    font-size: 15px;
+    margin-top: 16px;
 }
 
 .message-error {
@@ -121,37 +116,37 @@ h1, h2, h3 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 32px;
 }
 
 .user-info {
-    font-size: 0.875rem;
-    color: var(--color-ink-muted);
+    font-size: 14px;
+    color: #5B6470;
 }
 
 .login-form {
-    margin-top: 1.5rem;
+    margin-top: 24px;
 }
 
 .btn-block {
     width: 100%;
-    margin-top: 0.5rem;
+    margin-top: 8px;
 }
 
 .ml-sm {
-    margin-left: 0.75rem;
+    margin-left: 12px;
 }
 
 .user-email {
-    color: var(--color-ink);
+    color: #1B1F23;
     font-weight: 500;
 }
 
 .table {
     width: 100%;
     border-collapse: collapse; 
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background-color: #FFFFFF;
+    border: 1px solid #DADFE3;
     border-radius: 4px;
     overflow: hidden; 
 }
@@ -159,17 +154,31 @@ h1, h2, h3 {
 .table th,
 .table td {
     text-align: left;
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-border);
+    padding: 12px 16px;
+    border-bottom: 1px solid #DADFE3;
 }
 
 .table th {
-    font-size: 0.8125rem;
+    font-size: 13px;
     font-weight: 600;
-    color: var(--color-ink-muted);
-    background-color: var(--color-bg);
+    color: #5B6470;
+    background-color: #F4F5F3;
 }
 
 .table tbody tr:last-child td {
     border-bottom: none;
+}
+
+.app-layout {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+    background-color: #F4F5F3;
+}
+
+.main-content {
+    flex: 1;
+    height: 100%;
+    padding: 32px;
+    overflow-y: auto;
 }

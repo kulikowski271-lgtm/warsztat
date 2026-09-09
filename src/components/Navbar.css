@@ -1,0 +1,35 @@
+.sidebar-navbar {
+    width: 260px;
+    height: 100%;
+    background-color: #FFFFFF;
+    border-right: 1px solid #DADFE3;
+    padding: 24px;
+    display: flex; 
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebar-user-box {
+    margin-bottom: 48px;
+}
+
+.sidebar-user-text {
+    font-size: 14px;
+    color: #5B6470;
+    margin: 0;
+}
+
+.sidebar-user-email {
+    color: #1B1F23;
+    font-weight: 500;
+}
+
+.sidebar-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-logout-btn {
+    margin-top: auto;
+}
