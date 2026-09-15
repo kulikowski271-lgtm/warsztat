@@ -205,3 +205,21 @@ h1, h2, h3 {
     max-width: 480px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
+
+.client-link {
+    color: #1B1F23;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.client-link:hover {
+    color: #C81E3A;
+    text-decoration: underline;
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 12px;
+    text-decoration: none;
+    display: inline-block;
+}

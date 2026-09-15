@@ -7,6 +7,7 @@ import ClientsPage from "./pages/ClientsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import ClientDetailPage from "./pages/ClientDetailPage";
 
 function HomePage() {
     const [health, setHealth] = useState(null);
@@ -67,6 +68,16 @@ function App() {
                     </div>
                 </ProtectedRoute>
             } />
+            <Route path='/clients/:id' element={
+             <ProtectedRoute>
+                <div className="app-layout">
+                    <Navbar />
+                    <main className="main-content">
+                        <ClientDetailPage />
+                    </main>
+                </div>
+            </ProtectedRoute>
+} />
         </Routes>
     )
 }

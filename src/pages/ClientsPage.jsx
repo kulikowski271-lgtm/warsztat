@@ -150,15 +150,28 @@ function ClientsPage() {
                             <th>Email</th>
                             <th>Telefon</th>
                             <th>Liczba pojazdów</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {clients.map((client) => (
                             <tr key={client.id}>
-                                <td>{client.first_name} {client.last_name}</td>
+                                <td>
+                                <Link to={`/clients/${client.id}`} className="client-link">
+                                {client.first_name} {client.last_name}
+                                </Link>
+                                </td>
                                 <td>{client.email}</td>
                                 <td>{client.phone}</td>
                                 <td>{client.cars.length}</td>
+                                <td style={{ textAlign: "right" }}>
+                                    <Link
+                                        to={`/clients/${client.id}`}
+                                        className="btn btn-secondary btn-sm"
+                                    >
+                                        Szczegóły
+                                    </Link>
+                                </td>
                             </tr>
                          ))}
                     </tbody>
