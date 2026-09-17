@@ -4,7 +4,7 @@ import { login as loginRequest, getToken, apiFetch } from "../services/api";
 const AuthContext = createContext(null);
 
 export function AuthProvider( {children }) {
-    const [user, setUser] = useState(true);
+    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
 

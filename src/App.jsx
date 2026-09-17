@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ClientDetailPage from "./pages/ClientDetailPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function HomePage() {
     const [health, setHealth] = useState(null);
@@ -48,6 +49,7 @@ function App() {
     return (
         <Routes>
             <Route path='/login' element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route path='/' element={
                 <ProtectedRoute>
                     <div className="app-layout">
