@@ -5,6 +5,13 @@
     height: 100vh;
 }
 
+.page-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .register-card {
     width: 100%;
     max-width: 400px;

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import "./RegisterPage.css";
 
 function LoginPage() {
 
@@ -25,12 +26,12 @@ async function handleSubmit(e) {
 } 
 
     return (
-    <div className="page">
+    <div className="page register-container">
         <div className="page-content">
-            <div className="card">
-            <h1>Logowanie</h1>
+            <div className="card register-card">
+            <h1 className="register-title">Logowanie</h1>
             <form onSubmit={handleSubmit} className="login-form">
-            <div className="field">
+            <div className="field register-field">
                 <label>Email</label>
                 <input 
                 type="email"
@@ -40,7 +41,7 @@ async function handleSubmit(e) {
                 />
             </div>
 
-            <div className="field">
+            <div className="field register-field">
                 <label>Hasło</label>
                 <input
                 type="password"
@@ -55,6 +56,9 @@ async function handleSubmit(e) {
             <button type="submit" className="btn btn-primary btn-block">
                 Zaloguj się
             </button>
+            <div className="register-footer" style={{ marginTop: "20px" }}>
+                Nie masz konta? <Link to="/register" className="register-link">Zarejestruj się</Link>
+            </div>
 
         </form>
             </div>
