@@ -89,7 +89,7 @@ export async function getCars() {
     return apiFetch("/cars");
 }
 
-export async function createCar() {
+export async function createCar(carData) {
     return apiFetch("/cars", {
         method: "POST",
         body: JSON.stringify(carData),
@@ -99,5 +99,5 @@ export async function createCar() {
 export async function deleteCar(carId) {
     return apiFetch(`/cars/${carId}`, {
         method: "DELETE"
-    })
+    });
 }

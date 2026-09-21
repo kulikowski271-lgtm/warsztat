@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getClients } from "../services/api";
+import { getClients, createCar } from "../services/api";
 import "./ClientDetailPage.css";
 
 function ClientDetailPage() {
@@ -8,20 +8,84 @@ function ClientDetailPage() {
     const [client, setClient] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showCarForm, setShowCarForm] = useState(false);
+    const [carFormData, setCarFormData] = useState({
+        brand: "",
+        model: "",
+        registration_number: "",
+        mileage: "",
+        body_type: "",
+        production_year: "",
+    });
+    const [carFormError, setCarFormError] = useState(null);
+
+    async function fetchClientData() {
+        try {
+            const data = await getClients();
+            const found = data.find((c) => c.id === parseInt(id));
+            if (found) {
+                setClient(found);
+            } else {
+                setError("Nie znaleziono takiego klienta.");
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    function handleCarChange(e) {
+        const { name, value } = e.target;
+        setCarFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+
+    async function handleCarSubmit(e) {
+        e.preventDefault();
+        setCarFormError(null);
+
+        try {
+            const payload = {
+                ...carFormData,
+                mileage: Number(carFormData.mileage),
+                production_year: Number(carFormData.production_year),
+                owner_id: Number(id),
+            };
+
+            await createCar(payload)
+
+            setCarFormData({
+                brand: "",
+                model: "",
+                registration_number: "",
+                mileage: "",
+                body_type: "",
+                production_year: "",
+            });
+            setShowCarForm(false);
+            await fetchClientData();
+        } catch (err) {
+            setCarFormError(err.message)
+        }
+
+    }
 
     useEffect(() => {
-        getClients()
-            .then((data) => {
-                const found = data.find((c) => c.id === parseInt(id));
-                if (found) {
-                    setClient(found);
-                } else {
-                    setError("Nie znaleziono takiego klienta.");
-                }
-            })
-            .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+        fetchClientData();
     }, [id]);
+
+    if (loading) {
+        return (
+            <div className="page">
+                <div className="page-content">
+                    <p>Ładowanie...</p>
+                </div>
+            </div>
+        );
+    }
 
     if (loading) {
         return (
@@ -70,34 +134,114 @@ return (
                 </div>
                 <div className="vehicles-header">
                     <h2>Pojazdy klienta</h2>
-                    <button className="btn btn-primary">+ Dodaj pojazd</button>
+                    <button className="btn btn-primary" onClick={() => setShowCarForm(true)}>
+                        Dodaj pojazd
+                    </button>
                 </div>
 
-                {client.cars.length === 0 ? (
+                {showCarForm && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <div className="top-bar">
+                                <h2>Dodaj pojazd</h2>
+                                <button className="btn btn-secondary" onClick={() => setShowCarForm(false)}>X</button>
+                            </div>
+
+                            <form onSubmit={handleCarSubmit}>
+                                <div className="field">
+                                    <label>Marka</label>
+                                    <input
+                                        name="brand"
+                                        value={carFormData.brand}
+                                        onChange={handleCarChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="field">
+                                    <label>Model</label>
+                                    <input
+                                        name="model"
+                                        value={carFormData.model}
+                                        onChange={handleCarChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="field">
+                                    <label>Numer rejestracyjny</label>
+                                    <input
+                                        name="registration_number"
+                                        value={carFormData.registration_number}
+                                        onChange={handleCarChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="field">
+                                    <label>Przebieg</label>
+                                    <input
+                                        type="number"
+                                        name="mileage"
+                                        value={carFormData.mileage}
+                                        onChange={handleCarChange}
+                                        required
+                                        min="0"
+                                    />
+                                </div>
+                                <div className="field">
+                                    <label>Typ nadwozia</label>
+                                    <input
+                                        name="body_type"
+                                        value={carFormData.body_type}
+                                        onChange={handleCarChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="field">
+                                    <label>Rok produkcji</label>
+                                    <input
+                                        type="number"
+                                        name="production_year"
+                                        value={carFormData.production_year}
+                                        onChange={handleCarChange}
+                                        required
+                                    />
+                                </div>
+
+                                {carFormError && <div className="message message-error">{carFormError}</div>}
+
+                                <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                                    <button type="submit" className="btn btn-primary">Zapisz pojazd</button>
+                                    <button type="button" className="btn btn-secondary" onClick={() => setShowCarForm(false)}>Anuluj</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {!client.cars || client.cars.length === 0 ? (
                     <p className="empty-state">Ten klient nie ma jeszcze przypisanych pojazdów</p>
                 ) : (
                     <table className="table">
-                    <thead>
-                        <tr>
-                            <th>Marka i model</th>
-                            <th>Rok produkcji</th>
-                            <th>Przebieg</th>
-                            <th>Typ nadwozia</th>
-                            <th>Numer rejestracyjny</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {client.cars.map((car, index) => (
-                            <tr key={car.id || index}>
-                                <td>{car.brand} {car.model}</td>
-                                <td>{car.production_year}</td>
-                                <td>{car.mileage}</td>
-                                <td>{car.body_type}</td>
-                                <td>{car.registration_number}</td>
+                        <thead>
+                            <tr>
+                                <th>Marka i model</th>
+                                <th>Rok produkcji</th>
+                                <th>Przebieg</th>
+                                <th>Typ nadwozia</th>
+                                <th>Numer rejestracyjny</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {client.cars.map((car, index) => (
+                                <tr key={car.id || index}>
+                                    <td>{car.brand} {car.model}</td>
+                                    <td>{car.production_year}</td>
+                                    <td>{car.mileage} km</td>
+                                    <td>{car.body_type}</td>
+                                    <td>{car.registration_number}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 )}
             </div>
         </div>

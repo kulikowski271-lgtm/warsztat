@@ -56,7 +56,7 @@ function CarsPage() {
         }))
     }
 
-    async function handleSubmit(e) {
+   async function handleSubmit(e) {
         e.preventDefault();
         setFormError(null);
 
@@ -71,11 +71,16 @@ function CarsPage() {
             await createCar(payload);
 
             setFormData({
-                brand: "", model: "", registration_number: "",
-                mileage: "", body_type: "", production_year: "", owner_id: "",
+                brand: "",
+                model: "",
+                registration_number: "",
+                mileage: "",
+                body_type: "",
+                production_year: "",
+                owner_id: "",
             });
             setShowForm(false);
-            await loadCars();
+            await loadCars(); 
         } catch (err) {
             setFormError(err.message);
         }
