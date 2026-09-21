@@ -1,7 +1,7 @@
 import './App.css'
 import { useEffect, useState } from "react";
 import { checkHealth } from "./services/api";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import ClientsPage from "./pages/ClientsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -9,6 +9,7 @@ import { useAuth } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import ClientDetailPage from "./pages/ClientDetailPage";
 import RegisterPage from "./pages/RegisterPage";
+import CarsPage from "./pages/CarsPage";
 
 function HomePage() {
     const [health, setHealth] = useState(null);
@@ -71,15 +72,25 @@ function App() {
                 </ProtectedRoute>
             } />
             <Route path='/clients/:id' element={
-             <ProtectedRoute>
-                <div className="app-layout">
-                    <Navbar />
-                    <main className="main-content">
-                        <ClientDetailPage />
-                    </main>
-                </div>
-            </ProtectedRoute>
-} />
+                <ProtectedRoute>
+                    <div className="app-layout">
+                        <Navbar />
+                        <main className="main-content">
+                            <ClientDetailPage />
+                        </main>
+                    </div>
+                </ProtectedRoute>
+            } />
+            <Route path='/cars' element={
+                <ProtectedRoute>
+                    <div className="app-layout">
+                        <Navbar />
+                        <main className="main-content">
+                            <CarsPage />
+                        </main>
+                    </div>
+                </ProtectedRoute>
+            } />
         </Routes>
     )
 }

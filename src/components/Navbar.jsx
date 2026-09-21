@@ -16,6 +16,7 @@ function Navbar() {
             <nav className="sidebar-nav-links">
                 <Link to="/" className="btn btn-secondary">Pulpit</Link>
                 <Link to="/clients" className="btn btn-secondary">Klienci</Link>
+                <Link to="/cars" className="btn btn-secondary">Pojazdy</Link>
             </nav>
             <button 
                 className="btn btn-secondary" 
