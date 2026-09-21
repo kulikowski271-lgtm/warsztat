@@ -84,3 +84,20 @@ export async function registerUser(email, password) {
 
     return await response.json();
 }
+
+export async function getCars() {
+    return apiFetch("/cars");
+}
+
+export async function createCar() {
+    return apiFetch("/cars", {
+        method: "POST",
+        body: JSON.stringify(carData),
+    });
+}
+
+export async function deleteCar(carId) {
+    return apiFetch(`/cars/${carId}`, {
+        method: "DELETE"
+    })
+}
