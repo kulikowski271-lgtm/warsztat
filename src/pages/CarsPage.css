@@ -103,3 +103,24 @@
 .table tbody tr:last-child td {
     border-bottom: none;
 }
+
+.message-success {
+    padding: 12px 16px;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    border: 1px solid #c3e6cb;
+}
+
+.table th.text-center,
+.table td.text-center {
+    text-align: center;
+}
+
+.actions-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px; 
+}

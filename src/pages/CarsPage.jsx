@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCars, createCar, getClients, deleteCar } from "../services/api";
+import { getCars, createCar, getClients, deleteCar, updateCar } from "../services/api";
 import "./CarsPage.css";
 
 function CarsPage() {
@@ -9,6 +9,9 @@ function CarsPage() {
 
     const [clients, setClients] = useState([]);
     const [showForm, setShowForm] = useState(false);
+
+    const [editingCarId, setEditingCarId] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     const [formData, setFormData] = useState({
         brand: "",
@@ -56,9 +59,40 @@ function CarsPage() {
         }))
     }
 
-   async function handleSubmit(e) {
+    function handleOpenCreateForm() {
+        setEditingCarId(null);
+        setFormData({
+            brand: "",
+            model: "",
+            registration_number: "",
+            mileage: "",
+            body_type: "",
+            production_year: "",
+            owner_id: "",
+        });
+        setFormError(null);
+        setShowForm(true);
+    }
+
+    function handleOpenEditForm(car) {
+        setEditingCarId(car.id);
+        setFormData({
+            brand: car.brand || "",
+            model: car.model || "",
+            registration_number: car.registration_number || "",
+            mileage: car.mileage || "",
+            body_type: car.body_type || "",
+            production_year: car.production_year || "",
+            owner_id: car.owner_id || car.owner?.id || "",
+        });
+        setFormError(null);
+        setShowForm(true);
+    }
+
+  async function handleSubmit(e) {
         e.preventDefault();
         setFormError(null);
+        setSuccessMessage(null);
 
         try {
             const payload = {
@@ -68,19 +102,18 @@ function CarsPage() {
                 owner_id: Number(formData.owner_id),
             };
 
-            await createCar(payload);
+            if (editingCarId) {
+                await updateCar(editingCarId, payload);
+                setSuccessMessage("Pomyślnie zaktualizowano dane pojazdu.");
+            } else {
+                await createCar(payload);
+                setSuccessMessage("Pomyślnie dodano nowy pojazd.");
+            }
 
-            setFormData({
-                brand: "",
-                model: "",
-                registration_number: "",
-                mileage: "",
-                body_type: "",
-                production_year: "",
-                owner_id: "",
-            });
             setShowForm(false);
+            setEditingCarId(null);
             await loadCars(); 
+            setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
             setFormError(err.message);
         }
@@ -91,6 +124,7 @@ function CarsPage() {
 
         try {
             await deleteCar(carId);
+            setSuccessMessage("Pomyślnie usunięto pojazd.");
             await loadCars();
         } catch (err) {
             setError(err.message)
@@ -102,16 +136,22 @@ function CarsPage() {
             <div className="page-content">
                 <div className="top-bar">
                     <h1>Pojazdy</h1>
-                    <button className="btn btn-primary" onClick={() => setShowForm(true)}>
+                    <button className="btn btn-primary" onClick={handleOpenCreateForm}>
                         Nowy Pojazd
                     </button>
                 </div>
+
+                {successMessage && (
+                <div className="message message-success">
+                    {successMessage}
+                </div>
+                )}
 
                 {showForm && (
                     <div className="modal-overlay">
                         <div className="modal-content">
                             <div className="top-bar">
-                                <h2>Dodaj pojazd</h2>
+                                <h2>{editingCarId ? "Edytuj pojazd" : "Dodaj pojazd"}</h2>
                                 <button className="btn btn-secondary" onClick={() => setShowForm(false)}>X</button>
                             </div>
 
@@ -191,7 +231,7 @@ function CarsPage() {
                            {formError && <div className="message message-error">{formError}</div>}
 
                            <div>
-                            <button type="submit" className="btn btn-primary">Zapisz pojazd</button>
+                            <button type="submit" className="btn btn-primary">{editingCarId ? "Zapisz zmiany" : "Zapisz pojazd"}</button>
                             <button type="button" className="btn btn-secondary" onClick={() => setShowForm(false)}>Anuluj</button>
                             </div>             
                             
@@ -214,7 +254,7 @@ function CarsPage() {
                                     <th>Rok produkcji</th>
                                     <th>Przebieg</th>
                                     <th>Numer rejestracyjny</th>
-                                    <th>Akcje</th>
+                                    <th className="text-center">Akcje</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -224,7 +264,14 @@ function CarsPage() {
                                         <td>{car.production_year}</td>
                                         <td>{car.mileage}</td>
                                         <td>{car.registration_number}</td>
-                                        <td>
+                                        <td className="text-center">
+                                            <div>
+                                            <button 
+                                            className="btn btn-secondary"
+                                            onClick={() => handleOpenEditForm(car)}
+                                            >
+                                            Edytuj
+                                            </button>
                                             <button 
                                                 className="btn btn-secondary"
                                                 style={{ color: "#d9534f", borderColor: "#d9534f" }}
@@ -232,6 +279,7 @@ function CarsPage() {
                                             >
                                                 Usuń
                                             </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

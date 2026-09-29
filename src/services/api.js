@@ -101,3 +101,10 @@ export async function deleteCar(carId) {
         method: "DELETE"
     });
 }
+
+export async function updateCar(carId, carData) {
+    return apiFetch(`/cars/${carId}`, {
+        method: "PUT",
+        body: JSON.stringify(carData),
+    });
+}
