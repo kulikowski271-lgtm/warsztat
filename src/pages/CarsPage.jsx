@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCars, createCar, getClients } from "../services/api";
+import { getCars, createCar, getClients, deleteCar } from "../services/api";
 import "./CarsPage.css";
 
 function CarsPage() {
@@ -83,6 +83,17 @@ function CarsPage() {
             await loadCars(); 
         } catch (err) {
             setFormError(err.message);
+        }
+    }
+
+    async function handleDelete(carId) {
+        if (!window.confirm("Czy napewno chcesz usunąć pojazd?")) return;
+
+        try {
+            await deleteCar(carId);
+            await loadCars();
+        } catch (err) {
+            setError(err.message)
         }
     }
 
@@ -203,6 +214,7 @@ function CarsPage() {
                                     <th>Rok produkcji</th>
                                     <th>Przebieg</th>
                                     <th>Numer rejestracyjny</th>
+                                    <th>Akcje</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -212,6 +224,15 @@ function CarsPage() {
                                         <td>{car.production_year}</td>
                                         <td>{car.mileage}</td>
                                         <td>{car.registration_number}</td>
+                                        <td>
+                                            <button 
+                                                className="btn btn-secondary"
+                                                style={{ color: "#d9534f", borderColor: "#d9534f" }}
+                                                onClick={() => handleDelete(car.id)}
+                                            >
+                                                Usuń
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>

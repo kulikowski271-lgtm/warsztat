@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getClients, createCar } from "../services/api";
+import { getClients, createCar, deleteCar } from "../services/api";
 import "./ClientDetailPage.css";
 
 function ClientDetailPage() {
@@ -71,6 +71,17 @@ function ClientDetailPage() {
             setCarFormError(err.message)
         }
 
+    }
+
+    async function handleDeleteCar(carId) {
+        if (!window.confirm("Czy na pewno chcesz usunąć ten pojazd?")) return;
+
+        try {
+            await deleteCar(carId);
+            await fetchClientData();
+        } catch (err) {
+            setError(err.message);
+        }
     }
 
     useEffect(() => {
@@ -228,6 +239,7 @@ return (
                                 <th>Przebieg</th>
                                 <th>Typ nadwozia</th>
                                 <th>Numer rejestracyjny</th>
+                                <th>Akcje</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -238,6 +250,15 @@ return (
                                     <td>{car.mileage} km</td>
                                     <td>{car.body_type}</td>
                                     <td>{car.registration_number}</td>
+                                    <td>
+                                        <button
+                                            className="btn btn-secondary"
+                                            style={{ color: "#d9534f", borderColor: "#d9534f" }}
+                                            onClick={() => handleDeleteCar(car.id)}
+                                        >
+                                            Usuń
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
