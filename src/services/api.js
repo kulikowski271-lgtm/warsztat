@@ -108,3 +108,21 @@ export async function updateCar(carId, carData) {
         body: JSON.stringify(carData),
     });
 }
+
+export async function getOrders() {
+    return apiFetch("/orders");
+}
+
+export async function createOrder(orderData) {
+    return apiFetch("/orders", {
+        method: "POST",
+        body: JSON.stringify(orderData)
+    });
+}
+
+export async function updateOrder(orderId, orderData) {
+    return apiFetch(`/orders/${orderId}`, {
+        method: "PATCH",
+        body: JSON.stringify(orderData),
+    });
+}
