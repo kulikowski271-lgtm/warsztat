@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import ClientDetailPage from "./pages/ClientDetailPage";
 import RegisterPage from "./pages/RegisterPage";
 import CarsPage from "./pages/CarsPage";
+import OrdersPage from './pages/OrdersPage';
 
 function HomePage() {
     const [health, setHealth] = useState(null);
@@ -87,6 +88,17 @@ function App() {
                         <Navbar />
                         <main className="main-content">
                             <CarsPage />
+                        </main>
+                    </div>
+                </ProtectedRoute>
+            } />
+
+            <Route path='/orders' element={
+                <ProtectedRoute>
+                    <div className="app-layout">
+                        <Navbar />
+                        <main className="main-content">
+                            <OrdersPage />
                         </main>
                     </div>
                 </ProtectedRoute>

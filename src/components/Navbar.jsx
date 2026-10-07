@@ -17,6 +17,7 @@ function Navbar() {
                 <Link to="/" className="btn btn-secondary">Pulpit</Link>
                 <Link to="/clients" className="btn btn-secondary">Klienci</Link>
                 <Link to="/cars" className="btn btn-secondary">Pojazdy</Link>
+                <Link to="/orders" className="btn btn-secondary">Zlecenia</Link>
             </nav>
             <button 
                 className="btn btn-secondary" 
