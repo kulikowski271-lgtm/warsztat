@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getClients, createCar, deleteCar } from "../services/api";
+import { getClients, createCar, deleteCar, getOrders } from "../services/api";
 import "./ClientDetailPage.css";
 
 function ClientDetailPage() {
     const { id } = useParams();
     const [client, setClient] = useState(null);
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [activeTab, setActiveTab] = useState("cars");
     const [showCarForm, setShowCarForm] = useState(false);
     const [carFormData, setCarFormData] = useState({
         brand: "",
@@ -21,10 +23,24 @@ function ClientDetailPage() {
 
     async function fetchClientData() {
         try {
-            const data = await getClients();
-            const found = data.find((c) => c.id === parseInt(id));
-            if (found) {
-                setClient(found);
+            setLoading(true);
+            setError(null);
+
+            const clientsData = await getClients();
+            const ordersData = await getOrders();
+
+            const foundClient = clientsData.find((c) => c.id === parseInt(id));
+
+            if (foundClient) {
+                setClient(foundClient);
+
+                const clientCarIds = foundClient.cars ? foundClient.cars.map((car) => car.id) : [];
+
+                const clientOrders = ordersData.filter((order) =>
+                    clientCarIds.includes(order.car_id)
+                );
+
+                setOrders(clientOrders);
             } else {
                 setError("Nie znaleziono takiego klienta.");
             }
@@ -55,7 +71,7 @@ function ClientDetailPage() {
                 owner_id: Number(id),
             };
 
-            await createCar(payload)
+            await createCar(payload);
 
             setCarFormData({
                 brand: "",
@@ -68,9 +84,8 @@ function ClientDetailPage() {
             setShowCarForm(false);
             await fetchClientData();
         } catch (err) {
-            setCarFormError(err.message)
+            setCarFormError(err.message);
         }
-
     }
 
     async function handleDeleteCar(carId) {
@@ -84,19 +99,18 @@ function ClientDetailPage() {
         }
     }
 
+    // POPRAWKA: zmieniono client.car na client.cars
+    function getCarName(carId) {
+        if (!client || !client.cars) return `Pojazd #${carId}`;
+        const foundCar = client.cars.find((c) => c.id === carId);
+        return foundCar
+            ? `${foundCar.brand} ${foundCar.model} (${foundCar.registration_number})`
+            : `Pojazd #${carId}`;
+    }
+
     useEffect(() => {
         fetchClientData();
     }, [id]);
-
-    if (loading) {
-        return (
-            <div className="page">
-                <div className="page-content">
-                    <p>Ładowanie...</p>
-                </div>
-            </div>
-        );
-    }
 
     if (loading) {
         return (
@@ -120,8 +134,8 @@ function ClientDetailPage() {
 
     if (!client) return null;
 
-return (
-        <div className="page client-detail-page"> 
+    return (
+        <div className="page client-detail-page">
             <div className="page-content">
                 <div className="top-bar">
                     <h1>{client.first_name} {client.last_name}</h1>
@@ -129,27 +143,126 @@ return (
                         Powrót
                     </Link>
                 </div>
-                
+
                 <div className="card contact-card">
                     <h2>Dane kontaktowe</h2>
-                <div className="contact-grid">
-                <div>
-                    <span className="contact-item-label">Email</span>
-                    <span className="contact-item-value">{client.email}</span>
+                    <div className="contact-grid">
+                        <div>
+                            <span className="contact-item-label">Email</span>
+                            <span className="contact-item-value">{client.email}</span>
+                        </div>
+                        <div>
+                            <span className="contact-item-label">Telefon</span>
+                            <span className="contact-item-value">{client.phone}</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <span className="contact-item-label">Telefon</span>
-                    <span className="contact-item-value">{client.phone}</span>
-                </div>
-                </div>
-                </div>
-                <div className="vehicles-header">
-                    <h2>Pojazdy klienta</h2>
-                    <button className="btn btn-primary" onClick={() => setShowCarForm(true)}>
-                        Dodaj pojazd
+
+                <div className="tabs-container">
+                    <button
+                        className={`tab-button ${activeTab === "cars" ? "active" : ""}`}
+                        onClick={() => setActiveTab("cars")}
+                    >
+                        Pojazdy ({client.cars ? client.cars.length : 0})
+                    </button>
+                    <button
+                        className={`tab-button ${activeTab === "orders" ? "active" : ""}`}
+                        onClick={() => setActiveTab("orders")}
+                    >
+                        Zlecenia serwisowe ({orders.length})
                     </button>
                 </div>
 
+                {/* ZAKŁADKA 1: POJAZDY */}
+                {activeTab === "cars" && (
+                    <div className="tab-content">
+                        <div className="vehicles-header">
+                            <h2>Pojazdy klienta</h2>
+                            <button className="btn btn-primary" onClick={() => setShowCarForm(true)}>
+                                Dodaj pojazd
+                            </button>
+                        </div>
+
+                        {!client.cars || client.cars.length === 0 ? (
+                            <p className="empty-state">Ten klient nie ma jeszcze przypisanych pojazdów.</p>
+                        ) : (
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Marka i model</th>
+                                        <th>Rok produkcji</th>
+                                        <th>Przebieg</th>
+                                        <th>Typ nadwozia</th>
+                                        <th>Numer rejestracyjny</th>
+                                        <th>Akcje</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {client.cars.map((car) => (
+                                        <tr key={car.id}>
+                                            <td>{car.brand} {car.model}</td>
+                                            <td>{car.production_year}</td>
+                                            <td>{car.mileage} km</td>
+                                            <td>{car.body_type}</td>
+                                            <td>{car.registration_number}</td>
+                                            <td>
+                                                <button
+                                                    className="btn btn-secondary"
+                                                    style={{ color: "#d9534f", borderColor: "#d9534f" }}
+                                                    onClick={() => handleDeleteCar(car.id)}
+                                                >
+                                                    Usuń
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                )}
+
+                {/* ZAKŁADKA 2: ZLECENIA SERWISOWE */}
+                {activeTab === "orders" && (
+                    <div className="tab-content">
+                        <div className="vehicles-header">
+                            <h2>Zlecenia klienta</h2>
+                        </div>
+
+                        {orders.length === 0 ? (
+                            <p className="empty-state">Brak zleceń serwisowych dla pojazdów tego klienta.</p>
+                        ) : (
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Pojazd</th>
+                                        <th>Opis usterki / naprawy</th>
+                                        <th>Status</th>
+                                        <th>Koszt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map((order) => (
+                                        <tr key={order.id}>
+                                            <td>
+                                                <strong>{getCarName(order.car_id)}</strong>
+                                            </td>
+                                            <td>{order.description}</td>
+                                            <td>
+                                                <span className={`status-badge status-${order.status.toLowerCase()}`}>
+                                                    {order.status}
+                                                </span>
+                                            </td>
+                                            <td className="text-nowrap">{order.total_cost}&nbsp;zł</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                )}
+
+                {/* MODAL DODAWANIA POJAZDU */}
                 {showCarForm && (
                     <div className="modal-overlay">
                         <div className="modal-content">
@@ -226,43 +339,6 @@ return (
                             </form>
                         </div>
                     </div>
-                )}
-
-                {!client.cars || client.cars.length === 0 ? (
-                    <p className="empty-state">Ten klient nie ma jeszcze przypisanych pojazdów</p>
-                ) : (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>Marka i model</th>
-                                <th>Rok produkcji</th>
-                                <th>Przebieg</th>
-                                <th>Typ nadwozia</th>
-                                <th>Numer rejestracyjny</th>
-                                <th>Akcje</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {client.cars.map((car, index) => (
-                                <tr key={car.id || index}>
-                                    <td>{car.brand} {car.model}</td>
-                                    <td>{car.production_year}</td>
-                                    <td>{car.mileage} km</td>
-                                    <td>{car.body_type}</td>
-                                    <td>{car.registration_number}</td>
-                                    <td>
-                                        <button
-                                            className="btn btn-secondary"
-                                            style={{ color: "#d9534f", borderColor: "#d9534f" }}
-                                            onClick={() => handleDeleteCar(car.id)}
-                                        >
-                                            Usuń
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
                 )}
             </div>
         </div>

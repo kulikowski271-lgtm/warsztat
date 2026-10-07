@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getOrders, createOrder, updateOrder, getCars } from "../services/api";
-import "./OrdersPage.css";
 
 const ORDER_STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
 
@@ -187,7 +186,7 @@ function OrdersPage() {
                                     <tr key={order.id}>
                                         <td>{order.description}</td>
                                         <td>{order.status}</td>
-                                        <td>{order.total_cost} zł</td>
+                                        <td style={{ whiteSpace: "nowrap" }}>{order.total_cost}&nbsp;zł</td>
                                         <td className="text-center">
                                             <button className="btn btn-secondary" onClick={() => handleOpenEditForm(order)}>
                                                 Edytuj

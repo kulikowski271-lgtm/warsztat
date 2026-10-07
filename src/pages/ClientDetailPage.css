@@ -59,3 +59,66 @@
     padding: 40px 16px;
     font-size: 15px;
 }
+
+/* ==========================================================================
+   NOWE: Style dla zakładek (Tabs) oraz etykiet statusów w zleceniach
+   ========================================================================== */
+
+/* NOWE: Pasek na przyciski zakładek */
+.tabs-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #DADFE3;
+}
+
+/* NOWE: Domyślny wygląd przycisku zakładki */
+.tab-button {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #5B6470;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+    color: #1B1F23;
+}
+
+.tab-button.active {
+    color: #C81E3A;
+    border-bottom-color: #C81E3A;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-pending {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+.status-in_progress {
+    background-color: #CCE5FF;
+    color: #004085;
+}
+
+.status-completed {
+    background-color: #D4EDDA;
+    color: #155724;
+}
+
+.status-cancelled {
+    background-color: #F8D7DA;
+    color: #721C24;
+}
