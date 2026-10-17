@@ -85,8 +85,8 @@ export async function registerUser(email, password) {
     return await response.json();
 }
 
-export async function getCars() {
-    return apiFetch("/cars");
+export async function getCars(limit = 100) { 
+    return apiFetch(`/cars?limit=${limit}`); 
 }
 
 export async function createCar(carData) {
@@ -109,8 +109,8 @@ export async function updateCar(carId, carData) {
     });
 }
 
-export async function getOrders() {
-    return apiFetch("/orders");
+export async function getOrders(limit = 100) { 
+    return apiFetch(`/orders?limit=${limit}`); 
 }
 
 export async function createOrder(orderData) {

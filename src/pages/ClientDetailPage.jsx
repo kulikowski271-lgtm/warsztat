@@ -99,7 +99,6 @@ function ClientDetailPage() {
         }
     }
 
-    // POPRAWKA: zmieniono client.car na client.cars
     function getCarName(carId) {
         if (!client || !client.cars) return `Pojazd #${carId}`;
         const foundCar = client.cars.find((c) => c.id === carId);
