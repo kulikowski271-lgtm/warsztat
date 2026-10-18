@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getOrders, createOrder, updateOrder, getCars } from "../services/api";
+import { getOrders, createOrder, updateOrder, getAllCars } from "../services/api"; 
 
 const ORDER_STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
 
@@ -36,7 +36,7 @@ function OrdersPage() {
 
     async function loadCars() {
         try {
-            const data = await getCars();
+            const data = await getAllCars();
             setCars(data);
         } catch (err) {
             console.error("Nie udało się pobrać pojazdów:", err.message);
