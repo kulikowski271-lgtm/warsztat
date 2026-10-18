@@ -21,7 +21,7 @@ function ClientsPage() {
     async function loadClients() {
         try {
             const data = await getClients();
-            setClients(data);
+            setClients(data.items);
         } catch (err) {
             setError(err.message);
         } finally {

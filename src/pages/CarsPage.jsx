@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCars, createCar, getClients, deleteCar, updateCar } from "../services/api";
+import { getCars, createCar, getAllClients, deleteCar, updateCar } from "../services/api"; 
 import "./CarsPage.css";
 
 function CarsPage() {
@@ -30,7 +30,7 @@ function CarsPage() {
             setLoading(true);
             setError(null);
             const data = await getCars();
-            setCars(data);
+            setCars(data.items);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -40,7 +40,7 @@ function CarsPage() {
 
     async function loadClients() {
         try {
-            const data = await getClients();
+            const data = await getAllClients();
             setClients(data);
         } catch(err) {
             console.error("Nie udało się pobrać klientów:", err.message);

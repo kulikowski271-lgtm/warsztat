@@ -57,8 +57,27 @@ export async function checkHealth() {
     return response.json();
 }
 
-export async function getClients() {
-    return apiFetch("/clients");
+function buildQuery(params) {
+    const query = new URLSearchParams();
+    Object.entries(params).forEach(([key, value]) => {
+        if (value !== "" && value !== null && value !== undefined) {
+            query.append(key, value);
+        }
+    });
+    return query.toString();
+}
+
+export async function getClients({ search = "", limit = 10, offset = 0 } = {}) { // NOWE: zwraca stronę {items, total}
+    return apiFetch(`/clients?${buildQuery({ search, limit, offset })}`);
+}
+
+export async function getAllClients() { // NOWE: do selectów, zwraca samą tablicę (max 100)
+    const data = await getClients({ limit: 100 });
+    return data.items;
+}
+
+export async function getClient(clientId) { // NOWE: jeden klient zamiast pobierania wszystkich
+    return apiFetch(`/clients/${clientId}`);
 }
 
 export async function createClient(clientData) {
@@ -85,8 +104,13 @@ export async function registerUser(email, password) {
     return await response.json();
 }
 
-export async function getCars(limit = 100) { 
-    return apiFetch(`/cars?limit=${limit}`); 
+export async function getCars({ search = "", limit = 10, offset = 0 } = {}) { // NOWE: zwraca stronę {items, total}
+    return apiFetch(`/cars?${buildQuery({ search, limit, offset })}`);
+}
+
+export async function getAllCars() { // NOWE: do selectów, zwraca samą tablicę (max 100)
+    const data = await getCars({ limit: 100 });
+    return data.items;
 }
 
 export async function createCar(carData) {

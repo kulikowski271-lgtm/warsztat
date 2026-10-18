@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getClients, createCar, deleteCar, getOrders } from "../services/api";
+import { getClient, createCar, deleteCar, getOrders } from "../services/api";
 import "./ClientDetailPage.css";
 
 function ClientDetailPage() {
@@ -21,35 +21,25 @@ function ClientDetailPage() {
     });
     const [carFormError, setCarFormError] = useState(null);
 
-    async function fetchClientData() {
-        try {
-            setLoading(true);
-            setError(null);
+   async function fetchClientData() {
+    try {
+        setLoading(true);
+        setError(null);
 
-            const clientsData = await getClients();
-            const ordersData = await getOrders();
+        const foundClient = await getClient(id); // NOWE: jedno zapytanie o klienta, 404 obsłuży backend
+        const ordersData = await getOrders();
 
-            const foundClient = clientsData.find((c) => c.id === parseInt(id));
+        setClient(foundClient);
 
-            if (foundClient) {
-                setClient(foundClient);
-
-                const clientCarIds = foundClient.cars ? foundClient.cars.map((car) => car.id) : [];
-
-                const clientOrders = ordersData.filter((order) =>
-                    clientCarIds.includes(order.car_id)
-                );
-
-                setOrders(clientOrders);
-            } else {
-                setError("Nie znaleziono takiego klienta.");
-            }
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+        const clientCarIds = foundClient.cars ? foundClient.cars.map((car) => car.id) : [];
+        const clientOrders = ordersData.filter((order) => clientCarIds.includes(order.car_id));
+        setOrders(clientOrders);
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setLoading(false);
     }
+}
 
     function handleCarChange(e) {
         const { name, value } = e.target;
