@@ -67,16 +67,16 @@ function buildQuery(params) {
     return query.toString();
 }
 
-export async function getClients({ search = "", limit = 10, offset = 0 } = {}) { // NOWE: zwraca stronę {items, total}
+export async function getClients({ search = "", limit = 10, offset = 0 } = {}) { 
     return apiFetch(`/clients?${buildQuery({ search, limit, offset })}`);
 }
 
-export async function getAllClients() { // NOWE: do selectów, zwraca samą tablicę (max 100)
+export async function getAllClients() {
     const data = await getClients({ limit: 100 });
     return data.items;
 }
 
-export async function getClient(clientId) { // NOWE: jeden klient zamiast pobierania wszystkich
+export async function getClient(clientId) { 
     return apiFetch(`/clients/${clientId}`);
 }
 
@@ -104,11 +104,11 @@ export async function registerUser(email, password) {
     return await response.json();
 }
 
-export async function getCars({ search = "", limit = 10, offset = 0 } = {}) { // NOWE: zwraca stronę {items, total}
+export async function getCars({ search = "", limit = 10, offset = 0 } = {}) {
     return apiFetch(`/cars?${buildQuery({ search, limit, offset })}`);
 }
 
-export async function getAllCars() { // NOWE: do selectów, zwraca samą tablicę (max 100)
+export async function getAllCars() {
     const data = await getCars({ limit: 100 });
     return data.items;
 }

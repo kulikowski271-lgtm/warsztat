@@ -7,6 +7,9 @@ function ClientsPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null)
 
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
     const [showForm, setShowForm] = useState(false);
     
     const [formData, setFormData] = useState({
@@ -18,9 +21,15 @@ function ClientsPage() {
 
     const [formError, setFormError] = useState(null);
 
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(search), 400);
+        return () => clearTimeout(timer);
+    }, [search]);
+
     async function loadClients() {
         try {
-            const data = await getClients();
+            setError(null);
+            const data = await getClients({search: debouncedSearch});
             setClients(data.items);
         } catch (err) {
             setError(err.message);
@@ -31,7 +40,7 @@ function ClientsPage() {
 
     useEffect(() => {
         loadClients();
-    }, []);
+    }, [debouncedSearch]);
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -67,6 +76,12 @@ function ClientsPage() {
                     + Nowy klient
                     </button>
                 </div>
+                <input 
+                className="search-input"
+                placeholder="Szukaj po imieniu, nazwisku, email, lub telefonie..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                />
                 {showForm && (
                 <div className="modal-overlay">
                     <div className="modal-content">
@@ -140,7 +155,9 @@ function ClientsPage() {
                 {loading && <p>Ładowanie...</p>}
                 {error && <div className="message message-error">{error}</div>}
 
-                {!loading && clients.length === 0 && <p>Brak klientów w bazie.</p>}
+                {!loading && clients.length === 0 && (
+                 <p>{debouncedSearch ? "Brak wyników wyszukiwania." : "Brak klientów w bazie."}</p>
+                )}
 
                 {!loading && clients.length > 0 && (
                     <table className="table">

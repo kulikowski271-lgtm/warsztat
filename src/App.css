@@ -227,3 +227,19 @@ h1, h2, h3 {
 .text-center {
     text-align: center;
 }
+
+.search-input {
+    width: 100%;
+    max-width: 360px;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #DADFE3;
+    border-radius: 4px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #C81E3A;
+}
