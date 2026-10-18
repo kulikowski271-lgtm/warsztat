@@ -243,3 +243,21 @@ h1, h2, h3 {
     outline: none;
     border-color: #C81E3A;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.pagination-info {
+    font-size: 14px;
+    color: #5B6470;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

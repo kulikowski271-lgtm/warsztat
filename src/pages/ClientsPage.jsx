@@ -10,6 +10,10 @@ function ClientsPage() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
+    const PAGE_SIZE = 10;
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+
     const [showForm, setShowForm] = useState(false);
     
     const [formData, setFormData] = useState({
@@ -21,6 +25,8 @@ function ClientsPage() {
 
     const [formError, setFormError] = useState(null);
 
+    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
     useEffect(() => {
         const timer = setTimeout(() => setDebouncedSearch(search), 400);
         return () => clearTimeout(timer);
@@ -29,8 +35,13 @@ function ClientsPage() {
     async function loadClients() {
         try {
             setError(null);
-            const data = await getClients({search: debouncedSearch});
+            const data = await getClients({
+                search: debouncedSearch,
+                limit: PAGE_SIZE,
+                offset: (page - 1) * PAGE_SIZE,
+            });
             setClients(data.items);
+            setTotal(data.total);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -40,7 +51,7 @@ function ClientsPage() {
 
     useEffect(() => {
         loadClients();
-    }, [debouncedSearch]);
+    }, [debouncedSearch, page]);
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -80,7 +91,10 @@ function ClientsPage() {
                 className="search-input"
                 placeholder="Szukaj po imieniu, nazwisku, email, lub telefonie..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                }}
                 />
                 {showForm && (
                 <div className="modal-overlay">
@@ -160,6 +174,7 @@ function ClientsPage() {
                 )}
 
                 {!loading && clients.length > 0 && (
+                    <>
                     <table className="table">
                     <thead>
                         <tr>
@@ -193,11 +208,32 @@ function ClientsPage() {
                          ))}
                     </tbody>
                     </table>
+                        {total > PAGE_SIZE && (
+                            <div className="pagination">
+                                <button
+                                    className="btn btn-secondary btn-sm"
+                                    disabled={page <= 1}
+                                    onClick={() => setPage(page - 1)}
+                                >
+                                    Wstecz
+                                </button>
+                                <span className="pagination-info">
+                                    Strona {page} z {totalPages} ({total} wyników)
+                                </span>
+                                <button
+                                    className="btn btn-secondary btn-sm"
+                                    disabled={page >= totalPages}
+                                    onClick={() => setPage(page + 1)}
+                                >
+                                    Dalej
+                                </button>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
         </div>
-    )
-
+    );
 }
 
 export default ClientsPage;
