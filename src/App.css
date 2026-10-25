@@ -265,3 +265,11 @@ h1, h2, h3 {
 .message {
     white-space: pre-line; 
 }
+
+.actions-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}

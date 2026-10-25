@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getClients, createClient } from "../services/api";
+import { getClients, createClient, deleteClient } from "../services/api";
 import Pagination from "../components/Pagination"; 
 import { useDebounce } from "../hooks/useDebounce"; 
+import { useAuth } from "../context/AuthContext"; 
 
 function ClientsPage() {
     const [clients, setClients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null)
+
+    const { user } = useAuth();
+    const isAdmin = user?.role === "ADMIN";
 
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search);
@@ -35,6 +39,10 @@ function ClientsPage() {
                 limit: PAGE_SIZE,
                 offset: (page - 1) * PAGE_SIZE,
             });
+            if (data.items.length === 0 && page > 1) {
+                setPage(page - 1);
+                return;
+            }
             setClients(data.items);
             setTotal(data.total);
         } catch (err) {
@@ -45,7 +53,7 @@ function ClientsPage() {
     }
 
     useEffect(() => {
-    loadClients();
+        loadClients();
     }, [debouncedSearch, page]);
 
 
@@ -56,6 +64,17 @@ function ClientsPage() {
             [name]: value, 
         }));
     }
+
+    async function handleDelete(clientId) { 
+    if (!window.confirm("Czy na pewno chcesz usunąć tego klienta?")) return;
+
+    try {
+        await deleteClient(clientId);
+        await loadClients();
+    } catch (err) {
+        window.alert(err.message); 
+    }
+}
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -192,13 +211,24 @@ function ClientsPage() {
                                 <td>{client.email}</td>
                                 <td>{client.phone}</td>
                                 <td>{client.cars.length}</td>
-                                <td style={{ textAlign: "right" }}>
+                                <td>
+                                    <div className="actions-wrapper"> 
                                     <Link
                                         to={`/clients/${client.id}`}
                                         className="btn btn-secondary btn-sm"
                                     >
                                         Szczegóły
                                     </Link>
+                                    {isAdmin && ( 
+                                    <button
+                                        className="btn btn-secondary btn-sm"
+                                        style={{ color: "#d9534f", borderColor: "#d9534f", marginLeft: "8px" }}
+                                        onClick={() => handleDelete(client.id)}
+                                    >
+                                        Usuń
+                                    </button>
+                                    )}
+                                </div>
                                 </td>
                             </tr>
                          ))}

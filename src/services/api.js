@@ -87,6 +87,12 @@ export async function createClient(clientData) {
     })
 }
 
+export async function deleteClient(clientId) { 
+    return apiFetch(`/clients/${clientId}`, {
+        method: "DELETE"
+    });
+}
+
 export async function registerUser(email, password) {
     const response = await fetch("http://localhost:8000/register", {
         method: "POST",
@@ -98,7 +104,7 @@ export async function registerUser(email, password) {
 
     if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail || "Wystąpił błąd podczas rejestracji.");
+        throw new Error(formatError(errorData.detail) || "Wystąpił błąd podczas rejestracji.");
     }
 
     return await response.json();
