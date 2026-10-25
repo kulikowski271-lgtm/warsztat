@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import { getCars, createCar, getAllClients, deleteCar, updateCar } from "../services/api"; 
 import "./CarsPage.css";
+import Pagination from "../components/Pagination"; 
+import { useDebounce } from "../hooks/useDebounce";
 
 function CarsPage() {
     const [cars, setCars] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const PAGE_SIZE = 10; 
+    const [search, setSearch] = useState(""); 
+    const debouncedSearch = useDebounce(search); 
+    const [page, setPage] = useState(1); 
+    const [total, setTotal] = useState(0); 
 
     const [clients, setClients] = useState([]);
     const [showForm, setShowForm] = useState(false);
@@ -26,17 +34,25 @@ function CarsPage() {
     const [formError, setFormError] = useState(null);
 
     async function loadCars() {
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await getCars();
-            setCars(data.items);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+    try {
+        setError(null);
+        const data = await getCars({
+            search: debouncedSearch,
+            limit: PAGE_SIZE,
+            offset: (page - 1) * PAGE_SIZE, 
+        });
+        if (data.items.length === 0 && page > 1) {
+            setPage(page - 1);
+            return;
         }
+        setCars(data.items);
+        setTotal(data.total);
+    } catch (err) {
+        setError(err.message);
+    } finally {
+        setLoading(false);
     }
+}
 
     async function loadClients() {
         try {
@@ -49,7 +65,10 @@ function CarsPage() {
 
     useEffect(() => {
         loadCars();
-        loadClients();
+    }, [debouncedSearch, page]); 
+
+    useEffect(() => {
+        loadClients();  
     }, []);
 
     function handleChange(e) {
@@ -147,6 +166,16 @@ function CarsPage() {
                 </div>
                 )}
 
+                <input
+                    className="search-input"
+                    placeholder="Szukaj po marce, modelu lub numerze rejestracyjnym..."
+                    value={search}
+                    onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                    }}
+                />
+
                 {showForm && (
                     <div className="modal-overlay">
                         <div className="modal-content">
@@ -243,9 +272,12 @@ function CarsPage() {
 
                 {loading && <p>Ładowanie...</p>}
                 {error && <div className="message message-error">{error}</div>}
-                {!loading && !error && cars.length === 0 && <p>Brak pojazdów w bazie.</p>}
+                {!loading && !error && cars.length === 0 && (
+                    <p>{debouncedSearch ? "Brak wyników wyszukiwania." : "Brak pojazdów w bazie."}</p>
+                )}
 
                 {!loading && cars.length > 0 && (
+                    <>
                      <div className="table-wrapper">
                         <table className="table">
                             <thead>
@@ -286,6 +318,9 @@ function CarsPage() {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
+                    </>
+                    
                 )}
 
             </div>
