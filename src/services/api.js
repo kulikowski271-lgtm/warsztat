@@ -22,7 +22,7 @@ async function apiFetch(endpoint, options = {}) {
 
     if (!response.ok) {
         const err = await response.json().catch(() => ({}));
-        throw new Error(err.detail || "Błąd żądania");
+        throw new Error(formatError(err.detail));
     }
 
     return response.status === 204 ? null : response.json();
@@ -111,6 +111,23 @@ export async function getCars({ search = "", limit = 10, offset = 0 } = {}) {
 export async function getAllCars() {
     const data = await getCars({ limit: 100 });
     return data.items;
+}
+
+function formatError(detail) {
+    if (!detail) return "Błąd żądania";
+    if (typeof detail === "string") return detail; 
+
+    if (Array.isArray(detail)) { 
+        return detail
+            .map((e) => {
+                const field = e.loc?.[e.loc.length - 1]; 
+                const msg = (e.msg || "").replace("Value error, ", ""); 
+                return field ? `${field}: ${msg}` : msg;
+            })
+            .join("\n");
+    }
+
+    return "Błąd żądania";
 }
 
 export async function createCar(carData) {

@@ -261,3 +261,7 @@ h1, h2, h3 {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.message {
+    white-space: pre-line; 
+}
