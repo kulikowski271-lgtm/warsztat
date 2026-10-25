@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getClients, createClient } from "../services/api";
+import Pagination from "../components/Pagination"; 
+import { useDebounce } from "../hooks/useDebounce"; 
 
 function ClientsPage() {
     const [clients, setClients] = useState([]);
@@ -8,7 +10,7 @@ function ClientsPage() {
     const [error, setError] = useState(null)
 
     const [search, setSearch] = useState("");
-    const [debouncedSearch, setDebouncedSearch] = useState("");
+    const debouncedSearch = useDebounce(search);
 
     const PAGE_SIZE = 10;
     const [page, setPage] = useState(1);
@@ -24,13 +26,6 @@ function ClientsPage() {
     });
 
     const [formError, setFormError] = useState(null);
-
-    const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-
-    useEffect(() => {
-        const timer = setTimeout(() => setDebouncedSearch(search), 400);
-        return () => clearTimeout(timer);
-    }, [search]);
 
     async function loadClients() {
         try {
@@ -50,8 +45,9 @@ function ClientsPage() {
     }
 
     useEffect(() => {
-        loadClients();
+    loadClients();
     }, [debouncedSearch, page]);
+
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -208,27 +204,7 @@ function ClientsPage() {
                          ))}
                     </tbody>
                     </table>
-                        {total > PAGE_SIZE && (
-                            <div className="pagination">
-                                <button
-                                    className="btn btn-secondary btn-sm"
-                                    disabled={page <= 1}
-                                    onClick={() => setPage(page - 1)}
-                                >
-                                    Wstecz
-                                </button>
-                                <span className="pagination-info">
-                                    Strona {page} z {totalPages} ({total} wyników)
-                                </span>
-                                <button
-                                    className="btn btn-secondary btn-sm"
-                                    disabled={page >= totalPages}
-                                    onClick={() => setPage(page + 1)}
-                                >
-                                    Dalej
-                                </button>
-                            </div>
-                        )}
+                        <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
                     </>
                 )}
             </div>
