@@ -9,6 +9,10 @@ function ClientDetailPage() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { user } = useAuth();
+    const isAdmin = user?.role === "ADMIN";
+
     const [activeTab, setActiveTab] = useState("cars");
     const [showCarForm, setShowCarForm] = useState(false);
     const [carFormData, setCarFormData] = useState({
@@ -26,7 +30,7 @@ function ClientDetailPage() {
         setLoading(true);
         setError(null);
 
-        const foundClient = await getClient(id); // NOWE: jedno zapytanie o klienta, 404 obsłuży backend
+        const foundClient = await getClient(id); 
         const ordersData = await getOrders();
 
         setClient(foundClient);
@@ -35,7 +39,7 @@ function ClientDetailPage() {
         const clientOrders = ordersData.filter((order) => clientCarIds.includes(order.car_id));
         setOrders(clientOrders);
     } catch (err) {
-        setError(err.message);
+        window.alert(err.message);
     } finally {
         setLoading(false);
     }
@@ -195,6 +199,7 @@ function ClientDetailPage() {
                                             <td>{car.body_type}</td>
                                             <td>{car.registration_number}</td>
                                             <td>
+                                                {isAdmin && (
                                                 <button
                                                     className="btn btn-secondary"
                                                     style={{ color: "#d9534f", borderColor: "#d9534f" }}
@@ -202,6 +207,7 @@ function ClientDetailPage() {
                                                 >
                                                     Usuń
                                                 </button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}

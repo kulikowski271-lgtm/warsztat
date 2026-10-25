@@ -3,11 +3,15 @@ import { getCars, createCar, getAllClients, deleteCar, updateCar } from "../serv
 import "./CarsPage.css";
 import Pagination from "../components/Pagination"; 
 import { useDebounce } from "../hooks/useDebounce";
+import { useAuth } from "../context/AuthContext";
 
 function CarsPage() {
     const [cars, setCars] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { user } = useAuth();
+    const isAdmin = user?.role === "ADMIN";
 
     const PAGE_SIZE = 10; 
     const [search, setSearch] = useState(""); 
@@ -304,6 +308,7 @@ function CarsPage() {
                                             >
                                             Edytuj
                                             </button>
+                                            {isAdmin && (
                                             <button 
                                                 className="btn btn-secondary"
                                                 style={{ color: "#d9534f", borderColor: "#d9534f" }}
@@ -311,6 +316,7 @@ function CarsPage() {
                                             >
                                                 Usuń
                                             </button>
+                                            )}
                                             </div>
                                         </td>
                                     </tr>
