@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getClient, createCar, deleteCar, getOrders } from "../services/api";
 import "./ClientDetailPage.css";
+import { useAuth } from "../context/AuthContext"; 
 
 function ClientDetailPage() {
     const { id } = useParams();
