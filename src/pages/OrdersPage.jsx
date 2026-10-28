@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { getOrders, createOrder, updateOrder, getAllCars } from "../services/api"; 
+import { getOrders, createOrder, updateOrder, getAllCars } from "../services/api";
+import Pagination from "../components/Pagination";
+import { useDebounce } from "../hooks/useDebounce";
 
 const ORDER_STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
 
@@ -7,6 +9,12 @@ function OrdersPage() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const PAGE_SIZE = 10; 
+    const [search, setSearch] = useState(""); 
+    const debouncedSearch = useDebounce(search);
+    const [page, setPage] = useState(1); 
+    const [total, setTotal] = useState(0);
 
     const [cars, setCars] = useState([])
     const [showForm, setShowForm] = useState(null);
@@ -23,10 +31,18 @@ function OrdersPage() {
 
     async function loadOrders() {
         try {
-            setLoading(true);
             setError(null);
-            const data = await getOrders();
-            setOrders(data);
+        const data = await getOrders({
+            search: debouncedSearch,
+            limit: PAGE_SIZE,
+            offset: (page - 1) * PAGE_SIZE,
+        });
+        if (data.items.length === 0 && page > 1) { 
+            setPage(page - 1);
+            return;
+        }
+            setOrders(data.items);
+            setTotal(data.total);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -45,7 +61,10 @@ function OrdersPage() {
 
     useEffect(() => {
         loadOrders();
-        loadCars();
+    }, [debouncedSearch, page]);
+
+    useEffect(() => {
+    loadCars(); 
     }, []);
 
     function handleChange(e) {
@@ -113,6 +132,16 @@ function OrdersPage() {
 
                 {successMessage && <div className="message message-success">{successMessage}</div>}
 
+                <input
+                    className="search-input"
+                    placeholder="Szukaj po opisie zlecenia..."
+                    value={search}
+                    onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1); 
+                    }}
+                />
+
                 {showForm && (
                     <div className="modal-overlay">
                         <div className="modal-content">
@@ -168,9 +197,12 @@ function OrdersPage() {
 
                 {loading && <p>Ładowanie...</p>}
                 {error && <div className="message message-error">{error}</div>}
-                {!loading && !error && orders.length === 0 && <p>Brak zleceń w bazie.</p>}
+                {!loading && !error && orders.length === 0 && (
+                    <p>{debouncedSearch ? "Brak wyników wyszukiwania." : "Brak zleceń w bazie."}</p>
+                )}
 
                 {!loading && orders.length > 0 && (
+                    <>
                     <div className="table-wrapper">
                         <table className="table">
                             <thead>
@@ -197,6 +229,8 @@ function OrdersPage() {
                             </tbody>
                         </table>
                     </div>
+                    <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
+                    </>
                 )}
             </div>
         </div>

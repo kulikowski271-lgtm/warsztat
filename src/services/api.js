@@ -156,8 +156,13 @@ export async function updateCar(carId, carData) {
     });
 }
 
-export async function getOrders(limit = 100) { 
-    return apiFetch(`/orders?limit=${limit}`); 
+export async function getOrders({ search = "", limit = 10, offset = 0, car_id = "" } = {}) { 
+    return apiFetch(`/orders?${buildQuery({ search, limit, offset, car_id })}`);
+}
+
+export async function getAllOrders() { 
+    const data = await getOrders({ limit: 100 });
+    return data.items;
 }
 
 export async function createOrder(orderData) {
