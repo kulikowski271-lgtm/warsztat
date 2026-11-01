@@ -1,108 +1,27 @@
 import './App.css'
-import { useEffect, useState } from "react";
-import { checkHealth } from "./services/api";
 import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
-import ClientsPage from "./pages/ClientsPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { useAuth } from './context/AuthContext';
-import Navbar from './components/Navbar';
-import ClientDetailPage from "./pages/ClientDetailPage";
 import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import ClientsPage from "./pages/ClientsPage";
+import ClientDetailPage from "./pages/ClientDetailPage";
 import CarsPage from "./pages/CarsPage";
 import OrdersPage from './pages/OrdersPage';
-
-function HomePage() {
-    const [health, setHealth] = useState(null);
-    const [error, setError] = useState(null);
-
-    const { user, logout } = useAuth();
-
-    useEffect(() => {
-        checkHealth()
-            .then((data) => setHealth(data))
-            .catch((error) => setError(error.message));
-    }, []);
-
-    return (
-            <div>
-            <h1>Pulpit</h1>
-
-    {health && (
-    <div className="message message-success">
-        Backend działa
-        <br />
-        Server: {health.server}
-        <br />
-        Database: {health.database}
-    </div>
-)}
-
-{error && (
-    <div className="message message-error">
-        {error}
-    </div>
-)}
- </div>
-    );
-}
 
 function App() {
     return (
         <Routes>
-            <Route path='/login' element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path='/' element={
-                <ProtectedRoute>
-                    <div className="app-layout">
-                        <Navbar />
-                        <main className="main-content">
-                            <HomePage />
-                        </main>
-                    </div>
-                </ProtectedRoute>
-            } />
-            <Route path='/clients' element={
-                <ProtectedRoute>
-                    <div className="app-layout">
-                        <Navbar />
-                        <main className="main-content">
-                            <ClientsPage />
-                        </main>
-                    </div>
-                </ProtectedRoute>
-            } />
-            <Route path='/clients/:id' element={
-                <ProtectedRoute>
-                    <div className="app-layout">
-                        <Navbar />
-                        <main className="main-content">
-                            <ClientDetailPage />
-                        </main>
-                    </div>
-                </ProtectedRoute>
-            } />
-            <Route path='/cars' element={
-                <ProtectedRoute>
-                    <div className="app-layout">
-                        <Navbar />
-                        <main className="main-content">
-                            <CarsPage />
-                        </main>
-                    </div>
-                </ProtectedRoute>
-            } />
 
-            <Route path='/orders' element={
-                <ProtectedRoute>
-                    <div className="app-layout">
-                        <Navbar />
-                        <main className="main-content">
-                            <OrdersPage />
-                        </main>
-                    </div>
-                </ProtectedRoute>
-            } />
+            <Route element={<Layout />}>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/clients" element={<ClientsPage />} />
+                <Route path="/clients/:id" element={<ClientDetailPage />} />
+                <Route path="/cars" element={<CarsPage />} />
+                <Route path="/orders" element={<OrdersPage />} />
+            </Route>
         </Routes>
     )
 }
