@@ -160,7 +160,7 @@ function CarsPage() {
                 <div className="top-bar">
                     <h1>Pojazdy</h1>
                     <button className="btn btn-primary" onClick={handleOpenCreateForm}>
-                        Nowy Pojazd
+                        + Nowy Pojazd
                     </button>
                 </div>
 
@@ -290,7 +290,7 @@ function CarsPage() {
                                     <th>Rok produkcji</th>
                                     <th>Przebieg</th>
                                     <th>Numer rejestracyjny</th>
-                                    <th className="text-center">Akcje</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -300,18 +300,17 @@ function CarsPage() {
                                         <td>{car.production_year}</td>
                                         <td>{car.mileage}</td>
                                         <td>{car.registration_number}</td>
-                                        <td className="text-center">
-                                            <div>
+                                        <td>
+                                            <div className="actions-wrapper">
                                             <button 
-                                            className="btn btn-secondary"
+                                            className="btn btn-secondary btn-sm"
                                             onClick={() => handleOpenEditForm(car)}
                                             >
                                             Edytuj
                                             </button>
                                             {isAdmin && (
                                             <button 
-                                                className="btn btn-secondary"
-                                                style={{ color: "#d9534f", borderColor: "#d9534f" }}
+                                                className="btn btn-secondary btn-sm btn-danger"
                                                 onClick={() => handleDelete(car.id)}
                                             >
                                                 Usuń

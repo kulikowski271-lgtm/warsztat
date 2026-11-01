@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getOrders, createOrder, updateOrder, getAllCars } from "../services/api";
 import Pagination from "../components/Pagination";
 import { useDebounce } from "../hooks/useDebounce";
+import StatusBadge from "../components/StatusBadge";
+import { STATUS_LABELS, formatMoney } from "../utils/format";
 
 const ORDER_STATUSES = ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
 
@@ -126,7 +128,7 @@ function OrdersPage() {
                 <div className="top-bar">
                     <h1>Zlecenia serwisowe</h1>
                     <button className="btn btn-primary" onClick={handleOpenCreateForm}>
-                        Nowe Zlecenie
+                        + Nowe Zlecenie
                     </button>
                 </div>
 
@@ -160,7 +162,7 @@ function OrdersPage() {
                                     <label>Status</label>
                                     <select name="status" value={formData.status} onChange={handleChange} required>
                                         {ORDER_STATUSES.map((s) => (
-                                            <option key={s} value={s}>{s}</option>
+                                            <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -210,19 +212,21 @@ function OrdersPage() {
                                     <th>Opis</th>
                                     <th>Status</th>
                                     <th>Koszt</th>
-                                    <th className="text-center">Akcje</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {orders.map((order) => (
                                     <tr key={order.id}>
                                         <td>{order.description}</td>
-                                        <td>{order.status}</td>
-                                        <td style={{ whiteSpace: "nowrap" }}>{order.total_cost}&nbsp;zł</td>
-                                        <td className="text-center">
-                                            <button className="btn btn-secondary" onClick={() => handleOpenEditForm(order)}>
+                                        <td><StatusBadge status={order.status} /></td>
+                                        <td className="text-nowrap">{formatMoney(order.total_cost)}</td>
+                                        <td>
+                                            <div className="actions-wrapper">
+                                            <button className="btn btn-secondary btn-sm" onClick={() => handleOpenEditForm(order)}>
                                                 Edytuj
                                             </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

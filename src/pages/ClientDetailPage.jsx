@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getClient, createCar, deleteCar, getOrders } from "../services/api";
+import { getClient, createCar, deleteCar, getAllOrders } from "../services/api";
 import "./ClientDetailPage.css";
 import { useAuth } from "../context/AuthContext"; 
+import StatusBadge from "../components/StatusBadge";
+import { formatMoney } from "../utils/format";
 
 function ClientDetailPage() {
     const { id } = useParams();
@@ -32,7 +34,7 @@ function ClientDetailPage() {
         setError(null);
 
         const foundClient = await getClient(id); 
-        const ordersData = await getOrders();
+        const ordersData = await getAllOrders(); 
 
         setClient(foundClient);
 
@@ -167,7 +169,6 @@ function ClientDetailPage() {
                     </button>
                 </div>
 
-                {/* ZAKŁADKA 1: POJAZDY */}
                 {activeTab === "cars" && (
                     <div className="tab-content">
                         <div className="vehicles-header">
@@ -200,15 +201,16 @@ function ClientDetailPage() {
                                             <td>{car.body_type}</td>
                                             <td>{car.registration_number}</td>
                                             <td>
+                                                <div className="actions-wrapper">
                                                 {isAdmin && (
                                                 <button
-                                                    className="btn btn-secondary"
-                                                    style={{ color: "#d9534f", borderColor: "#d9534f" }}
+                                                    className="btn btn-secondary btn-sm btn-danger"
                                                     onClick={() => handleDeleteCar(car.id)}
                                                 >
                                                     Usuń
                                                 </button>
                                                 )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -218,7 +220,6 @@ function ClientDetailPage() {
                     </div>
                 )}
 
-                {/* ZAKŁADKA 2: ZLECENIA SERWISOWE */}
                 {activeTab === "orders" && (
                     <div className="tab-content">
                         <div className="vehicles-header">
@@ -244,12 +245,8 @@ function ClientDetailPage() {
                                                 <strong>{getCarName(order.car_id)}</strong>
                                             </td>
                                             <td>{order.description}</td>
-                                            <td>
-                                                <span className={`status-badge status-${order.status.toLowerCase()}`}>
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                            <td className="text-nowrap">{order.total_cost}&nbsp;zł</td>
+                                            <td><StatusBadge status={order.status} /></td>
+                                            <td className="text-nowrap">{formatMoney(order.total_cost)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -258,7 +255,6 @@ function ClientDetailPage() {
                     </div>
                 )}
 
-                {/* MODAL DODAWANIA POJAZDU */}
                 {showCarForm && (
                     <div className="modal-overlay">
                         <div className="modal-content">

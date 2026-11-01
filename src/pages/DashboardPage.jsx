@@ -2,17 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getDashboard } from "../services/api";
 import "./DashboardPage.css";
-
-const STATUS_LABELS = {
-    PENDING: "Oczekujące",
-    IN_PROGRESS: "W realizacji",
-    COMPLETED: "Zakończone",
-    CANCELLED: "Anulowane",
-};
-
-function formatMoney(value) {
-    return `${value.toLocaleString("pl-PL", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} zł`;
-}
+import StatusBadge from "../components/StatusBadge";
+import { formatMoney } from "../utils/format";
 
 function DashboardPage() {
     const [stats, setStats] = useState(null);
@@ -79,14 +70,10 @@ function DashboardPage() {
                                     <td>{order.car_name}</td>
                                     <td>{order.client_name}</td>
                                     <td>{order.description}</td>
-                                    <td>
-                                        <span className={`dash-badge dash-badge-${order.status.toLowerCase()}`}>
-                                            {STATUS_LABELS[order.status]}
-                                        </span>
-                                    </td>
-                                    <td style={{ whiteSpace: "nowrap" }}>{formatMoney(order.total_cost)}</td>
+                                    <td><StatusBadge status={order.status} /></td>
+                                    <td className="text-nowrap">{formatMoney(order.total_cost)}</td>
                                 </tr>
-                            ))}
+    ))}
                         </tbody>
                     </table>
                 </div>
