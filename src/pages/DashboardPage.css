@@ -1,0 +1,71 @@
+.dash-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 24px 0 32px;
+}
+
+.dash-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px;
+    background-color: #FFFFFF;
+    border: 1px solid #DADFE3;
+    border-radius: 8px;
+    color: #1B1F23;
+    text-decoration: none;
+}
+
+a.dash-card:hover {
+    border-color: #C81E3A;
+}
+
+.dash-card-accent {
+    background-color: #FCEAEA;
+    border-color: #F3C6C6;
+}
+
+.dash-card-accent .dash-card-value {
+    color: #C81E3A;
+}
+
+.dash-card-label {
+    font-size: 13px;
+    color: #5B6470;
+}
+
+.dash-card-value {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.dash-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.dash-link {
+    font-size: 14px;
+    color: #C81E3A;
+    text-decoration: none;
+}
+
+.dash-link:hover {
+    text-decoration: underline;
+}
+
+.dash-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.dash-badge-pending { background-color: #FFF3CD; color: #856404; }
+.dash-badge-in_progress { background-color: #CCE5FF; color: #004085; }
+.dash-badge-completed { background-color: #D4EDDA; color: #155724; }
+.dash-badge-cancelled { background-color: #F8D7DA; color: #721C24; }

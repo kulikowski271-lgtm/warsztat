@@ -178,3 +178,7 @@ export async function updateOrder(orderId, orderData) {
         body: JSON.stringify(orderData),
     });
 }
+
+export async function getDashboard() { 
+    return apiFetch("/api/v1/dashboard");
+}
