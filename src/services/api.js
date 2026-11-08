@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 function getToken() {
     return localStorage.getItem("token");
@@ -87,6 +87,13 @@ export async function createClient(clientData) {
     })
 }
 
+export async function updateClient(clientId, clientData) {
+    return apiFetch(`/clients/${clientId}`, {
+        method: "PUT",
+        body: JSON.stringify(clientData),
+    });
+}
+
 export async function deleteClient(clientId) { 
     return apiFetch(`/clients/${clientId}`, {
         method: "DELETE"
@@ -94,7 +101,7 @@ export async function deleteClient(clientId) {
 }
 
 export async function registerUser(email, password) {
-    const response = await fetch("http://localhost:8000/register", {
+    const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

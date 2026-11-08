@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { getClient, createCar, deleteCar, getAllOrders } from "../services/api";
+import { getClient, updateClient, createCar, deleteCar, getAllOrders } from "../services/api";
 import "./ClientDetailPage.css";
 import { useAuth } from "../context/AuthContext"; 
 import StatusBadge from "../components/StatusBadge";
@@ -12,6 +12,10 @@ function ClientDetailPage() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const [showClientForm, setShowClientForm] = useState(false);
+    const [clientFormData, setClientFormData] = useState({ first_name: "", last_name: "", email: "", phone: "" });
+    const [clientFormError, setClientFormError] = useState(null);
 
     const { user } = useAuth();
     const isAdmin = user?.role === "ADMIN";
@@ -54,6 +58,34 @@ function ClientDetailPage() {
             ...prev,
             [name]: value,
         }));
+    }
+
+    function handleOpenClientForm() {
+        setClientFormData({
+            first_name: client.first_name,
+            last_name: client.last_name,
+            email: client.email,
+            phone: client.phone,
+        });
+        setClientFormError(null);
+        setShowClientForm(true);
+    }
+    
+    function handleClientChange(e) {
+    const { name, value } = e.target;
+    setClientFormData((prev) => ({...prev, [name]: value }));
+    }
+
+    async function handleClientSubmit(e) {
+        e.preventDefault();
+        setClientFormError(null);
+        try {
+            await updateClient(id, clientFormData);
+            setShowClientForm(false);
+            await fetchClientData();
+        } catch (err) {
+            setClientFormError(err.message)
+        }
     }
 
     async function handleCarSubmit(e) {
@@ -135,10 +167,50 @@ function ClientDetailPage() {
             <div className="page-content">
                 <div className="top-bar">
                     <h1>{client.first_name} {client.last_name}</h1>
+                    <div className="top-bar-actions">
+                    <button className="btn btn-secondary" onClick={handleOpenClientForm}>Edytuj dane</button>
                     <Link to="/clients" className="btn btn-secondary">
                         Powrót
                     </Link>
+                    </div>
                 </div>
+
+                {showClientForm && (
+    <div className="modal-overlay">
+        <div className="modal-content">
+            <div className="top-bar">
+                <h2>Edytuj klienta</h2>
+                <button className="btn btn-secondary" onClick={() => setShowClientForm(false)}>X</button>
+            </div>
+
+            <form onSubmit={handleClientSubmit}>
+                <div className="field">
+                    <label>Imię</label>
+                    <input name="first_name" value={clientFormData.first_name} onChange={handleClientChange} required />
+                </div>
+                <div className="field">
+                    <label>Nazwisko</label>
+                    <input name="last_name" value={clientFormData.last_name} onChange={handleClientChange} required />
+                </div>
+                <div className="field">
+                    <label>Email</label>
+                    <input type="email" name="email" value={clientFormData.email} onChange={handleClientChange} required />
+                </div>
+                <div className="field">
+                    <label>Telefon</label>
+                    <input name="phone" value={clientFormData.phone} onChange={handleClientChange} required />
+                </div>
+
+                {clientFormError && <div className="message message-error">{clientFormError}</div>}
+
+                <div className="form-actions">
+                    <button type="submit" className="btn btn-primary">Zapisz zmiany</button>
+                    <button type="button" className="btn btn-secondary" onClick={() => setShowClientForm(false)}>Anuluj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+)}
 
                 <div className="card contact-card">
                     <h2>Dane kontaktowe</h2>
@@ -189,7 +261,7 @@ function ClientDetailPage() {
                                         <th>Przebieg</th>
                                         <th>Typ nadwozia</th>
                                         <th>Numer rejestracyjny</th>
-                                        <th>Akcje</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
