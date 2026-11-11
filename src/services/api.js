@@ -163,8 +163,8 @@ export async function updateCar(carId, carData) {
     });
 }
 
-export async function getOrders({ search = "", limit = 10, offset = 0, car_id = "" } = {}) { 
-    return apiFetch(`/orders?${buildQuery({ search, limit, offset, car_id })}`);
+export async function getOrders({ search = "", status = "", limit = 10, offset = 0, car_id = "" } = {}) { 
+    return apiFetch(`/orders?${buildQuery({ search, status, limit, offset, car_id })}`);
 }
 
 export async function getAllOrders() { 
@@ -189,3 +189,4 @@ export async function updateOrder(orderId, orderData) {
 export async function getDashboard() { 
     return apiFetch("/api/v1/dashboard");
 }
+

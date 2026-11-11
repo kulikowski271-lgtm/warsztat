@@ -333,3 +333,29 @@ h1, h2, h3 {
     gap: 10px;
     margin-top: 20px;
 }
+
+.filters-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.filters-row .search-box {
+    margin-bottom: 0;
+    flex: 1;
+}
+
+.filter-select {
+    padding: 10px 12px;
+    border: 1px solid #DADFE3;
+    border-radius: 4px;
+    font-size: 15px;
+    font-family: inherit;
+    background-color: #FFFFFF;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #C81E3A;
+}

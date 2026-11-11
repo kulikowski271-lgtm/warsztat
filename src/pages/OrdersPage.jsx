@@ -13,13 +13,14 @@ function OrdersPage() {
     const [error, setError] = useState(null);
 
     const PAGE_SIZE = 10; 
-    const [search, setSearch] = useState(""); 
+    const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState(""); 
     const debouncedSearch = useDebounce(search);
     const [page, setPage] = useState(1); 
     const [total, setTotal] = useState(0);
 
     const [cars, setCars] = useState([])
-    const [showForm, setShowForm] = useState(null);
+    const [showForm, setShowForm] = useState(false);
     const [successMessage, setSuccessMessage] = useState(null);
     const [editingOrderId, setEditingOrderId] = useState(null);
 
@@ -36,6 +37,7 @@ function OrdersPage() {
             setError(null);
         const data = await getOrders({
             search: debouncedSearch,
+            status: statusFilter,
             limit: PAGE_SIZE,
             offset: (page - 1) * PAGE_SIZE,
         });
@@ -63,7 +65,7 @@ function OrdersPage() {
 
     useEffect(() => {
         loadOrders();
-    }, [debouncedSearch, page]);
+    }, [debouncedSearch, statusFilter, page]);
 
     useEffect(() => {
     loadCars(); 
@@ -115,6 +117,11 @@ function OrdersPage() {
 
             setShowForm(false);
             setEditingOrderId(null);
+            setFormData({ description: "", status: "PENDING", total_cost: "", car_id: "" });
+
+            setStatusFilter(""); 
+            setPage(1)
+
             await loadOrders();
             setTimeout(() => setSuccessMessage(null), 3000);
         } catch (err) {
@@ -134,8 +141,21 @@ function OrdersPage() {
 
                 {successMessage && <div className="message message-success">{successMessage}</div>}
 
+                <div className="filters-row">
+                    <select
+                        className="filter-select"
+                        value={statusFilter}
+                        onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+                    >
+                        <option value="">Wszystkie statusy</option>
+                        {ORDER_STATUSES.map((s) => (
+                            <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                        ))}
+                    </select>
+
+                
                 <input
-                    className="search-input"
+                    className="search-input search-box" 
                     placeholder="Szukaj po opisie zlecenia..."
                     value={search}
                     onChange={(e) => {
@@ -143,6 +163,7 @@ function OrdersPage() {
                     setPage(1); 
                     }}
                 />
+                </div>
 
                 {showForm && (
                     <div className="modal-overlay">
@@ -200,10 +221,10 @@ function OrdersPage() {
                 {loading && <p>Ładowanie...</p>}
                 {error && <div className="message message-error">{error}</div>}
                 {!loading && !error && orders.length === 0 && (
-                    <p>{debouncedSearch ? "Brak wyników wyszukiwania." : "Brak zleceń w bazie."}</p>
+                    <p>{debouncedSearch || statusFilter ? "Brak wyników wyszukiwania." : "Brak zleceń w bazie."}</p>
                 )}
 
-                {!loading && orders.length > 0 && (
+                {!loading && !error && orders.length > 0 && (
                     <>
                     <div className="table-wrapper">
                         <table className="table">
