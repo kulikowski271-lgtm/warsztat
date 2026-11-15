@@ -122,3 +122,14 @@
     background-color: #F8D7DA;
     color: #721C24;
 }
+
+.text-nowrap {
+    white-space: nowrap;
+}
+
+:root {
+    --color-ink: #1B1F23;
+    --color-ink-muted: #5B6470;
+    --color-border: #DADFE3;
+    --color-surface: #FFFFFF;
+}

@@ -190,6 +190,7 @@ function ClientsPage() {
 
                 {!loading && clients.length > 0 && (
                     <>
+                    <div className="table-wrapper">
                     <table className="table">
                     <thead>
                         <tr>
@@ -221,8 +222,7 @@ function ClientsPage() {
                                     </Link>
                                     {isAdmin && ( 
                                     <button
-                                        className="btn btn-secondary btn-sm"
-                                        style={{ color: "#d9534f", borderColor: "#d9534f", marginLeft: "8px" }}
+                                        className="btn btn-secondary btn-sm btn-dange"
                                         onClick={() => handleDelete(client.id)}
                                     >
                                         Usuń
@@ -234,6 +234,7 @@ function ClientsPage() {
                          ))}
                     </tbody>
                     </table>
+                    </div>
                         <Pagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />
                     </>
                 )}
