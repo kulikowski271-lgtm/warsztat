@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./RegisterPage.css";
 
+const ALLOW_REGISTER = import.meta.env.VITE_ALLOW_REGISTER !== "false";
+
 function LoginPage() {
 
 const [email, setEmail] = useState("");
@@ -56,9 +58,18 @@ async function handleSubmit(e) {
             <button type="submit" className="btn btn-primary btn-block">
                 Zaloguj się
             </button>
+            {!ALLOW_REGISTER && (
+            <div className="message message-success">
+                Konta demo:{"\n"}
+                admin@demo.pl / demoadmin123{"\n"}
+                mechanik@demo.pl / demomechanik123
+            </div>
+            )}
+            {ALLOW_REGISTER && (
             <div className="register-footer" style={{ marginTop: "20px" }}>
                 Nie masz konta? <Link to="/register" className="register-link">Zarejestruj się</Link>
             </div>
+            )}
 
         </form>
             </div>
