@@ -8,6 +8,33 @@ Projekt składa się z dwóch części:
 - **Frontend** — aplikacja webowa zbudowana w React.
 - **Backend** — REST API stworzone przy użyciu FastAPI, odpowiedzialne za logikę biznesową, autoryzację i komunikację z bazą danych.
 
+## Demo online
+
+Aplikację można obejrzeć bez instalowania czegokolwiek:
+
+**https://warsztat-iczpmllkf-noname-3a82.vercel.app**
+
+Konta demo (rejestracja jest wyłączona w wersji demo):
+
+| Rola | Email | Hasło |
+|---|---|---|
+| `ADMIN` | `admin@demo.pl` | `demoadmin123` |
+| `MECHANIC` | `mechanik@demo.pl` | `demomechanik123` |
+
+Konto `ADMIN` może dodatkowo usuwać klientów i pojazdy, a `MECHANIC` ma ograniczone uprawnienia.
+
+> **Uwaga:** backend działa na darmowym planie hostingu i usypia po okresie bezczynności. Pierwsze logowanie może potrwać do ok. minuty, kolejne działają normalnie. Dane w demo są przykładowe i mogą być zmieniane przez innych użytkowników.
+
+### Hosting wersji demo
+
+| Warstwa | Usługa |
+|---|---|
+| Frontend (React + Vite) | Vercel |
+| Backend (FastAPI) | Render |
+| Baza danych (PostgreSQL) | Neon |
+
+Wersja demo jest responsywna, więc można ją otworzyć także na telefonie.
+
 ## Zrzuty ekranu
 
 ### Logowanie
